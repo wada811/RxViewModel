@@ -4,24 +4,18 @@ RxViewModel
 RxViewModel is ViewModel helper of MVVM with RxJava for Android.
 
 ## Description
+- `RxCommand` binds Android View event on Model method.
+- `RxProperty` binds Model properties on Android View value.
+- `RxViewModel` manages `RxCommand` and `RxProperty` as `Disposable`.
 
 ## Requirement
+- RxJava2
 
 ## Getting Started
 
-Declare dependencies to use RxViewModel.
+### To use RxViewModel
 
-```
-repositories {
-    maven {
-        url "https://jitpack.io"
-    }
-}
-
-dependencies {
-    compile 'com.wada811.rxviewmodel:rxviewmodel:1.0.0'
-}
-```
+[![](https://jitpack.io/v/wada811/RxViewModel.svg)](https://jitpack.io/#wada811/RxViewModel)
 
 ## Usage
 
@@ -34,7 +28,7 @@ dependencies {
 
 ## Licence
 
-    Copyright 2016 wada811
+    Copyright 2017 wada811
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
