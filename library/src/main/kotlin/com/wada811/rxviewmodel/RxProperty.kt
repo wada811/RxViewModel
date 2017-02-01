@@ -42,7 +42,7 @@ class RxProperty<T>(source: Observable<T>, initialValue: T, mode: EnumSet<Mode> 
         } else {
             processor = PublishProcessor.create<T>().toSerialized()
         }
-        source.lastElement().blockingGet()
+        value = source.lastElement().blockingGet()
         sourceDisposable = source.subscribe({ value = it }, { processor.onError(it) }, { processor.onComplete() })
     }
 
