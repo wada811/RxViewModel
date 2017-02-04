@@ -1,9 +1,11 @@
-package com.wada811.sample
+package com.wada811.sample.viewmodel
 
 import android.util.Log
-import com.wada811.rxviewmodel.RxCommand
-import com.wada811.rxviewmodel.RxProperty
 import com.wada811.rxviewmodel.RxViewModel
+import com.wada811.rxviewmodel.commands.RxCommand
+import com.wada811.rxviewmodel.messages.RxMessenger
+import com.wada811.rxviewmodel.properties.RxProperty
+import com.wada811.sample.view.activity.MainActivity
 import io.reactivex.Observable
 
 class MainViewModel : RxViewModel() {
@@ -14,8 +16,9 @@ class MainViewModel : RxViewModel() {
     init {
         helloCommand.toFlowable()
             .subscribe({
-                helloName.value = "Hello, ${name.value}!"
                 Log.d("RxViewModel", "onNext")
+                helloName.value = "Hello, ${name.value}!"
+                RxMessenger.send(MainActivity.ToastAction(helloName.value))
             }, {
                 Log.e("RxViewModel", "onError")
             }, {

@@ -1,4 +1,4 @@
-package com.wada811.rxviewmodel
+package com.wada811.rxviewmodel.properties
 
 import android.databinding.ObservableField
 import io.reactivex.Observable
@@ -9,7 +9,7 @@ import io.reactivex.processors.PublishProcessor
 import java.util.*
 
 class RxProperty<T>(source: Observable<T>, initialValue: T, mode: EnumSet<Mode> = RxProperty.Mode.DEFAULT_MODE) : ObservableField<T>(initialValue), Disposable {
-
+    
     var value: T = initialValue
         get() = super.get()
         set(value) {
@@ -21,19 +21,19 @@ class RxProperty<T>(source: Observable<T>, initialValue: T, mode: EnumSet<Mode> 
                 processor.onNext(value)
             }
         }
-
+    
     @Deprecated("For Data-Binding", ReplaceWith("value"), DeprecationLevel.HIDDEN)
     override fun get(): T? = value
-
+    
     @Deprecated("For Data-Binding", ReplaceWith("this.value = value"), DeprecationLevel.HIDDEN)
     override fun set(value: T) {
         this.value = value
     }
-
+    
     private var isDistinctUntilChanged: Boolean
     private var processor: FlowableProcessor<T>
     private var sourceDisposable: Disposable?
-
+    
     init {
         isDistinctUntilChanged = mode.contains(Mode.DISTINCT_UNTIL_CHANGED)
         val isRaiseLatestValueOnSubscribe = mode.contains(Mode.RAISE_LATEST_VALUE_ON_SUBSCRIBE)
@@ -45,17 +45,12 @@ class RxProperty<T>(source: Observable<T>, initialValue: T, mode: EnumSet<Mode> 
         value = source.lastElement().blockingGet()
         sourceDisposable = source.subscribe({ value = it }, { processor.onError(it) }, { processor.onComplete() })
     }
-
+    
     fun toObservable(): Observable<T> = processor.toObservable()
-
-    override fun isDisposed(): Boolean = sourceDisposable == null || sourceDisposable!!.isDisposed
-    override fun dispose() {
-        if (!isDisposed) {
-            sourceDisposable?.dispose()
-        }
-        sourceDisposable = null
-    }
-
+    
+    override fun isDisposed(): Boolean = sourceDisposable?.isDisposed ?: true
+    override fun dispose(): Unit = sourceDisposable?.dispose() ?: Unit
+    
     enum class Mode {
         /**
          * If next value is same as current, not set and not notify.
@@ -65,10 +60,10 @@ class RxProperty<T>(source: Observable<T>, initialValue: T, mode: EnumSet<Mode> 
          * Sends notification on the instance created and subscribed.
          */
         RAISE_LATEST_VALUE_ON_SUBSCRIBE;
-
+        
         internal companion object {
-            internal val DEFAULT_MODE = EnumSet.of(Mode.DISTINCT_UNTIL_CHANGED, Mode.RAISE_LATEST_VALUE_ON_SUBSCRIBE)
+            internal val DEFAULT_MODE = EnumSet.of(DISTINCT_UNTIL_CHANGED, RAISE_LATEST_VALUE_ON_SUBSCRIBE)
         }
     }
-
+    
 }

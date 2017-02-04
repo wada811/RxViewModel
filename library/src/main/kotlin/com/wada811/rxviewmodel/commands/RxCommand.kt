@@ -1,4 +1,4 @@
-package com.wada811.rxviewmodel
+package com.wada811.rxviewmodel.commands
 
 import android.databinding.ObservableBoolean
 import io.reactivex.Flowable
@@ -8,23 +8,23 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.processors.FlowableProcessor
 import io.reactivex.processors.PublishProcessor
 
-class RxCommand<T>(canExecuteSource: Observable<Boolean>? = null, canExecuteInitially: Boolean = true) : Disposable {
+class RxCommand<T>(canExecuteSource: Observable<Boolean>? = null) : Disposable {
     private val trigger: FlowableProcessor<T> = PublishProcessor.create<T>().toSerialized()
     var canExecute: ObservableBoolean
         get
         private set
     private var canExecuteSourceDisposable: Disposable?
     private val disposables = CompositeDisposable()
-
+    
     init {
-        canExecute = ObservableBoolean(canExecuteInitially)
+        canExecute = ObservableBoolean(canExecuteSource?.lastElement()?.blockingGet() ?: true)
         canExecuteSourceDisposable = canExecuteSource?.distinctUntilChanged()?.subscribe({ canExecute.set(it) })
     }
-
+    
     @Suppress("unused") fun toFlowable(): Flowable<T> = trigger
-
+    
     internal fun execute(parameter: T) = trigger.onNext(parameter)
-
+    
     override fun isDisposed(): Boolean = disposables.isDisposed
     override fun dispose() {
         if (isDisposed) {
@@ -34,7 +34,7 @@ class RxCommand<T>(canExecuteSource: Observable<Boolean>? = null, canExecuteInit
             canExecuteSourceDisposable?.dispose()
         }
     }
-
+    
     internal fun bind(disposable: Disposable) {
         disposables.add(disposable)
     }

@@ -36,12 +36,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // Language
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // Test
     testCompile 'junit:junit:4.12'
-    kapt "com.android.databinding:compiler:2.2.2"
-    compile 'com.github.wada811:RxViewModel:1.0.0'
-    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0-SNAPSHOT'
-    compile 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0-SNAPSHOT'
-    compile 'com.android.support:appcompat-v7:25.0.0'
+    // Android
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    // DataBinding
+    kapt "com.android.databinding:compiler:$android_tools_version"
+    compile 'com.github.wada811:RxViewModel:0.2.0'
 }

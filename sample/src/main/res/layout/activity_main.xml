@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
     >
     <data>
         <variable
             name="viewModel"
-            type="com.wada811.sample.MainViewModel"
+            type="com.wada811.sample.viewmodel.MainViewModel"
             />
     </data>
     <LinearLayout
@@ -13,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context="com.wada811.sample.MainActivity"
+        tools:context="com.wada811.sample.view.activity.MainActivity"
         >
         <EditText
             android:layout_width="wrap_content"
@@ -21,10 +22,10 @@
             android:text="@={viewModel.name}"
             />
         <Button
-            android:text="@string/hello"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:click="@{viewModel.helloCommand}"
+            android:text="@string/hello"
+            app:click="@{viewModel.helloCommand}"
             />
         <TextView
             android:layout_width="wrap_content"

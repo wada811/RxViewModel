@@ -1,5 +1,7 @@
 package com.wada811.rxviewmodel
 
+import com.wada811.rxviewmodel.commands.RxCommand
+import com.wada811.rxviewmodel.properties.RxProperty
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 
@@ -11,11 +13,12 @@ open class RxViewModel : Disposable {
             disposables.dispose()
         }
     }
-
+    
     protected fun <T> RxProperty<T>.asManaged(): RxProperty<T> {
         disposables.add(this)
         return this
     }
+    
     protected fun <T> RxCommand<T>.asManaged(): RxCommand<T> {
         disposables.add(this)
         return this
