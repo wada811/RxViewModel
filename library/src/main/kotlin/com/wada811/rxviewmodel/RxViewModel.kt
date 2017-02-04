@@ -8,11 +8,7 @@ import io.reactivex.disposables.Disposable
 open class RxViewModel : Disposable {
     private val disposables = CompositeDisposable()
     override fun isDisposed(): Boolean = disposables.isDisposed
-    override fun dispose() {
-        if (!isDisposed) {
-            disposables.dispose()
-        }
-    }
+    override fun dispose(): Unit = disposables.dispose()
     
     protected fun <T> RxProperty<T>.asManaged(): RxProperty<T> {
         disposables.add(this)
@@ -22,5 +18,9 @@ open class RxViewModel : Disposable {
     protected fun <T> RxCommand<T>.asManaged(): RxCommand<T> {
         disposables.add(this)
         return this
+    }
+    
+    protected fun <T> T.asManaged() where T : Disposable {
+        disposables.add(this)
     }
 }

@@ -23,6 +23,6 @@ class MainViewModel : RxViewModel() {
                 Log.e("RxViewModel", "onError")
             }, {
                 Log.i("RxViewModel", "onComplete")
-            })
+            }).asManaged()
     }
 }
