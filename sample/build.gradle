@@ -44,6 +44,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.1'
     // DataBinding
     kapt "com.android.databinding:compiler:$android_tools_version"
-    compile 'com.github.wada811:RxViewModel:0.2.1'
-//    compile project(':library')
+//    compile 'com.github.wada811:RxViewModel:0.2.1'
+    compile project(':library')
 }
