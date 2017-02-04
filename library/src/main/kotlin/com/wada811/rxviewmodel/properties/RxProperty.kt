@@ -23,7 +23,7 @@ class RxProperty<T>(source: Observable<T>, initialValue: T, mode: EnumSet<Mode> 
         }
     
     @Deprecated("For Data-Binding", ReplaceWith("value"), DeprecationLevel.HIDDEN)
-    override fun get(): T? = value
+    override fun get(): T = value
     
     @Deprecated("For Data-Binding", ReplaceWith("this.value = value"), DeprecationLevel.HIDDEN)
     override fun set(value: T) {
