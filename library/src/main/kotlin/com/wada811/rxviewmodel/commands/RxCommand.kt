@@ -40,6 +40,7 @@ class RxCommand<T>(canExecuteSource: Observable<Boolean> = Observable.just(true)
     }
 }
 
+fun <T> Observable<Boolean>.toRxCommand() = RxCommand<T>(this)
 fun <T> Observable<T>.bind(command: RxCommand<T>) {
     command.bind(this.filter { command.canExecute.get() }.subscribe { command.execute(it) })
 }
