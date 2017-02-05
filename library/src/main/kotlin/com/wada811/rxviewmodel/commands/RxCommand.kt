@@ -8,17 +8,17 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.processors.FlowableProcessor
 import io.reactivex.processors.PublishProcessor
 
-class RxCommand<T>(canExecuteSource: Observable<Boolean>? = null) : Disposable {
+class RxCommand<T>(canExecuteSource: Observable<Boolean> = Observable.just(true)) : Disposable {
     private val trigger: FlowableProcessor<T> = PublishProcessor.create<T>().toSerialized()
     var canExecute: ObservableBoolean
         get
         private set
-    private var canExecuteSourceDisposable: Disposable?
+    private var canExecuteSourceDisposable: Disposable
     private val disposables = CompositeDisposable()
     
     init {
-        canExecute = ObservableBoolean(canExecuteSource?.lastElement()?.blockingGet() ?: true)
-        canExecuteSourceDisposable = canExecuteSource?.distinctUntilChanged()?.subscribe({ canExecute.set(it) })
+        canExecute = ObservableBoolean(canExecuteSource.lastElement().blockingGet())
+        canExecuteSourceDisposable = canExecuteSource.distinctUntilChanged().subscribe({ canExecute.set(it) })
     }
     
     @Suppress("unused") fun toFlowable(): Flowable<T> = trigger
@@ -31,7 +31,7 @@ class RxCommand<T>(canExecuteSource: Observable<Boolean>? = null) : Disposable {
             trigger.onComplete()
             disposables.dispose()
             canExecute.set(false)
-            canExecuteSourceDisposable?.dispose()
+            canExecuteSourceDisposable.dispose()
         }
     }
     
