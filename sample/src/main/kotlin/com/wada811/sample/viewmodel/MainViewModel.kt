@@ -9,9 +9,9 @@ import com.wada811.sample.view.activity.MainActivity
 import io.reactivex.Observable
 
 class MainViewModel : RxViewModel() {
-    val name = RxProperty<String>(Observable.fromArray("world"), "").asManaged()
+    val name = RxProperty<String>(Observable.just("world"), "world").asManaged()
     val helloCommand = RxCommand<Unit>(name.toObservable().map { it != "" }).asManaged()
-    val helloName = RxProperty<String>(Observable.fromArray(""), "").asManaged()
+    val helloName = RxProperty<String>(Observable.just(""), "").asManaged()
     
     init {
         helloCommand.toFlowable()
