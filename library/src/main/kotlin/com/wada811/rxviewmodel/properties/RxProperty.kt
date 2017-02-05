@@ -8,9 +8,8 @@ import io.reactivex.processors.FlowableProcessor
 import io.reactivex.processors.PublishProcessor
 import java.util.*
 
-class RxProperty<T>(source: Observable<T>, initialValue: T, mode: EnumSet<Mode> = RxProperty.Mode.DEFAULT_MODE) : ObservableField<T>(initialValue), Disposable {
-    
-    var value: T = initialValue
+class RxProperty<T>(source: Observable<T>, mode: EnumSet<Mode> = RxProperty.Mode.DEFAULT_MODE) : ObservableField<T>(source.lastElement().blockingGet()), Disposable {
+    var value: T = source.lastElement().blockingGet()
         get() = super.get()
         set(value) {
             if (field != value) {
@@ -38,11 +37,10 @@ class RxProperty<T>(source: Observable<T>, initialValue: T, mode: EnumSet<Mode> 
         isDistinctUntilChanged = mode.contains(Mode.DISTINCT_UNTIL_CHANGED)
         val isRaiseLatestValueOnSubscribe = mode.contains(Mode.RAISE_LATEST_VALUE_ON_SUBSCRIBE)
         if (isRaiseLatestValueOnSubscribe) {
-            processor = BehaviorProcessor.createDefault(initialValue).toSerialized()
+            processor = BehaviorProcessor.createDefault(value).toSerialized()
         } else {
             processor = PublishProcessor.create<T>().toSerialized()
         }
-        value = source.lastElement().blockingGet()
         sourceDisposable = source.subscribe({ value = it }, { processor.onError(it) }, { processor.onComplete() })
     }
     
