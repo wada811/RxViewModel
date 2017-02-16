@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.wada811'
+group = 'com.github.wada811'
 
 android {
     compileSdkVersion 25
@@ -12,8 +12,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 7
-        versionName "0.3.1"
+        versionCode 8
+        versionName "0.4.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -47,6 +47,4 @@ dependencies {
     // Rx
     compile "io.reactivex.rxjava2:rxjava:2.0.5"
     compile "io.reactivex.rxjava2:rxandroid:2.0.1"
-    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0-SNAPSHOT'
-    compile 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0-SNAPSHOT'
 }

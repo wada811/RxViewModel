@@ -1,46 +1,45 @@
 package com.wada811.rxviewmodel.commands
 
 import android.databinding.ObservableBoolean
-import io.reactivex.Flowable
+import com.wada811.rxviewmodel.extensions.addTo
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.processors.FlowableProcessor
-import io.reactivex.processors.PublishProcessor
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 
 class RxCommand<T>(canExecuteSource: Observable<Boolean> = Observable.just(true), canExecuteInitially: Boolean = true) : Disposable {
-    private val trigger: FlowableProcessor<T> = PublishProcessor.create<T>().toSerialized()
-    var canExecute: ObservableBoolean
-        get
-        private set
-    private var canExecuteSourceDisposable: Disposable
+    private val subject: Subject<T> = PublishSubject.create<T>().toSerialized()
+    val canExecute: ObservableBoolean = ObservableBoolean(canExecuteInitially)
     private val disposables = CompositeDisposable()
     
     init {
-        canExecute = ObservableBoolean(canExecuteInitially)
-        canExecuteSourceDisposable = canExecuteSource.distinctUntilChanged().subscribe({ canExecute.set(it) })
+        canExecuteSource
+            .distinctUntilChanged()
+            .subscribe { canExecute.set(it) }
+            .addTo(disposables)
     }
     
-    @Suppress("unused") fun toFlowable(): Flowable<T> = trigger
+    @Suppress("unused") fun toObservable(): Observable<T> = subject
     
-    internal fun execute(parameter: T) = trigger.onNext(parameter)
+    internal fun execute(parameter: T) = subject.onNext(parameter)
     
     override fun isDisposed(): Boolean = disposables.isDisposed
     override fun dispose() {
-        if (isDisposed) {
-            trigger.onComplete()
+        if (!isDisposed) {
+            subject.onComplete()
             disposables.dispose()
             canExecute.set(false)
-            canExecuteSourceDisposable.dispose()
         }
     }
     
-    internal fun bind(disposable: Disposable) {
-        disposables.add(disposable)
+    fun bindTrigger(observable: Observable<T>) {
+        observable
+            .filter { canExecute.get() }
+            .doOnTerminate { dispose() }
+            .subscribe({ execute(it) }, { subject.onError(it) }, { subject.onComplete() })
+            .addTo(disposables)
     }
 }
 
 fun <T> Observable<Boolean>.toRxCommand(canExecuteInitially: Boolean = true) = RxCommand<T>(this, canExecuteInitially)
-fun <T> Observable<T>.bind(command: RxCommand<T>) {
-    command.bind(this.filter { command.canExecute.get() }.subscribe { command.execute(it) })
-}

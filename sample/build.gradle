@@ -46,4 +46,6 @@ dependencies {
     kapt "com.android.databinding:compiler:$android_tools_version"
 //    compile 'com.github.wada811:RxViewModel:0.2.1'
     compile project(':library')
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0-SNAPSHOT'
+    compile 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0-SNAPSHOT'
 }
